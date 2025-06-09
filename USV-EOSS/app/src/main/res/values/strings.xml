@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">GoogleMapsDemo</string>
+    <string name="normal">Normal</string>
+    <string name="hybrid">Hybrid</string>
+    <string name="satellite">Satelite</string>
+    <string name="terrain">Terrain</string>
+    <string name="none">None</string>
+</resources>
