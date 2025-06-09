@@ -1,6 +1,7 @@
 package com.example.googlemapsdemo
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
@@ -21,6 +22,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main) // Load the layout defined in activity_main.xml
+        setSupportActionBar(findViewById(R.id.toolbar))
 
         var mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -73,7 +75,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         //map.setPadding(0,0,800, 0)
 
         // Add UI-Controls
-
 
     }
 }

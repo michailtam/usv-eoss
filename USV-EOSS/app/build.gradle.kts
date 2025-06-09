@@ -1,10 +1,18 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
 }
 
-// Read the property from local.properties
-val mapsApiKey: String = project.findProperty("MAPS_API_KEY") as String? ?: "MISSING_API_KEY"
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) {
+        file.inputStream().use { load(it) }
+    }
+}
+
+val mapsApiKey: String = localProperties.getProperty("MAPS_API_KEY") ?: "MISSING_API_KEY"
 
 android {
     namespace = "com.example.googlemapsdemo"
@@ -42,9 +50,7 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
-    // implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    // implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
