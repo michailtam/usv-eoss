@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "GoogleMapsDemo"
+rootProject.name = "USVEOSS"
 include(":app")

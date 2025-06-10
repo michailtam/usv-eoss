@@ -15,11 +15,11 @@ val localProperties = Properties().apply {
 val mapsApiKey: String = localProperties.getProperty("MAPS_API_KEY") ?: "MISSING_API_KEY"
 
 android {
-    namespace = "com.example.googlemapsdemo"
+    namespace = "com.example.usveoss"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.googlemapsdemo"
+        applicationId = "com.example.usveoss"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

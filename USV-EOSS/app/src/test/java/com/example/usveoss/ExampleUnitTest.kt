@@ -1,4 +1,4 @@
-package com.example.googlemapsdemo
+package com.example.usveoss
 
 import org.junit.Test
 

@@ -1,4 +1,4 @@
-package com.example.googlemapsdemo
+package com.example.usveoss
 
 import android.os.Bundle
 import android.util.Log
@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import com.example.usveoss.misc.TypeAndStyle
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -17,6 +18,12 @@ import com.google.android.gms.maps.model.MarkerOptions
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var map:  GoogleMap
     private var mZoomLevel = 16f // 16 times zoom
+    private val typeAndStyle by lazy { TypeAndStyle() }
+
+    // Lat/Lon for thira in Santorini
+    private var latitude = 36.41499042172217
+    private var longitude = 25.4229644592048173
+    private val santorini_thira = LatLng(latitude, longitude)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,23 +45,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     // Handle click-list for the menu items
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
-            R.id.normal_map -> {
-                map.mapType = GoogleMap.MAP_TYPE_NORMAL
-            }
-            R.id.hybrid_map -> {
-                map.mapType = GoogleMap.MAP_TYPE_HYBRID
-            }
-            R.id.satelite_map -> {
-                map.mapType = GoogleMap.MAP_TYPE_SATELLITE
-            }
-            R.id.terrain_map -> {
-                map.mapType = GoogleMap.MAP_TYPE_TERRAIN
-            }
-            R.id.none_map -> {
-                map.mapType = GoogleMap.MAP_TYPE_NONE
-            }
-        }
+        typeAndStyle.setMapType(item, map)
         return true
     }
 
@@ -63,10 +54,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         map = googleMap
 
         // TODO: Find the latitude pos 50m away to the sea
-        var santorini_thira = LatLng(36.41499042172217, 25.4229644592048173)
         //santorini_thira = SphericalUtil.computeOffset(santorini_thira, 0.0, 1000.0)
 
-        map.addMarker(MarkerOptions().position(santorini_thira).title("Περιβαλλοντική Έρευνα Θήρα"))
+        map.addMarker(MarkerOptions().position(getLatLon()).title("Περιβαλλοντική Έρευνα Θήρα"))
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(santorini_thira, mZoomLevel))
         map.uiSettings.apply {
             isZoomControlsEnabled = true
@@ -76,5 +66,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // Add UI-Controls
 
+    }
+
+    fun getLatLon(): LatLng {
+        return santorini_thira
     }
 }
