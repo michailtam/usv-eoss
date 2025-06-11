@@ -20,9 +20,9 @@ class TypeAndStyle {
             R.id.terrain_map -> {
                 map.mapType = GoogleMap.MAP_TYPE_TERRAIN
             }
-            R.id.none_map -> {
+            /*R.id.none_map -> {
                 map.mapType = GoogleMap.MAP_TYPE_NONE
-            }
+            }*/
         }
     }
 }
