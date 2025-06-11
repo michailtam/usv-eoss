@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
     private lateinit var map:  GoogleMap
     private var mZoomLevelMin = 13f
     private var mZoomLevelMax = 19f
+    private var mScale = 0.01f
     private val mTypeAndStyle by lazy { TypeAndStyle() }
     private val mCameraAndViewport by lazy { CameraAndViewport(10f) } // Start zoom level
 
@@ -70,7 +71,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
         // TODO: Find the latitude pos 50m away to the sea
         //santorini_thira = SphericalUtil.computeOffset(santorini_thira, 0.0, 1000.0)
         // Add the USV marker
-        val usvIcon = fromPngToBitmap(R.drawable.the_otter_usv)
+        val bitmap = fromPngToBitmap(R.drawable.the_otter_usv, scale = mScale) // Convert the png image to bitmap
+        val usvIcon = BitmapDescriptorFactory.fromBitmap(bitmap)
         map.addMarker(
             MarkerOptions()
                 .position(getLatLon())
@@ -113,6 +115,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
 
         // Add UI-Controls
         map.setOnMarkerDragListener(this)
+
+        // Tracks the zoom process to scale the usv icon appropriately
+        //TODO: Current
+        map.setOnCameraMoveListener {
+            val currentZoom = map.cameraPosition.zoom
+            val width = (bitmap.width * mScale).toInt()
+            val height = (bitmap.height * mScale).toInt()
+            //val scaledBitmap = Bitmap.createScaledBitmap(bitmap, width, height, true)
+            //var usvIconScaled = BitmapDescriptorFactory.fromBitmap(scaledBitmap)
+            Log.d("ZOOMING", "Zoom in progress: $currentZoom")
+        }
     }
 
     // Get LatLon coordinates
@@ -137,13 +150,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
     }
 
     // Convert a vector image to a bitmap one
-    private fun fromPngToBitmap(id: Int, scale: Float = 0.2f): BitmapDescriptor {
+    private fun fromPngToBitmap(id: Int, scale: Float = 0.5f): Bitmap {
         val bitmap = BitmapFactory.decodeResource(resources, id)
-
         val width = (bitmap.width * scale).toInt()
         val height = (bitmap.height * scale).toInt()
-
-        val scaled = Bitmap.createScaledBitmap(bitmap, width, height, true)
-        return BitmapDescriptorFactory.fromBitmap(scaled)
+        return Bitmap.createScaledBitmap(bitmap, width, height, true)
     }
 }
