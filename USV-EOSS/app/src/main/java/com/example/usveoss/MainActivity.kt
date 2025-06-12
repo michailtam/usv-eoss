@@ -23,22 +23,25 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.launch
+import com.example.usveoss.misc.PathPlanner
 import kotlinx.coroutines.delay as delay
 
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListener {
     private lateinit var map:  GoogleMap
     private var mZoomLevelMin = 13f
-    private var mZoomLevelMax = 19f
+    private var mZoomLevelMax = 20f
     private var mScale = 0.001f
     private var lastZoomLevel: Float = -1f
     private val mTypeAndStyle by lazy { TypeAndStyle() }
+    private val mPathPlanner by lazy { PathPlanner() }
     private val mCameraAndViewport by lazy { CameraAndViewport(10f) } // Start zoom level
 
     // Lat/Lon for thira in Santorini
     private var latitude = 36.415416
     private var longitude = 25.426502
     private val usvLatLong = LatLng(latitude, longitude)
+    private var prevLatLong = LatLng(latitude, longitude)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,6 +134,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
             Log.d("ZOOM", "Zoom=$currentZoom | Scale=$newScale")
             lastZoomLevel = currentZoom
         }
+
+        mPathPlanner.setMap(map)
     }
 
     // Get LatLon coordinates
@@ -140,6 +145,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
 
     private fun onMapClicked() {
         map.setOnMapClickListener {
+            val currentPos = LatLng(it.latitude, it.longitude)
+            mPathPlanner.addPoint(prevLatLong)
+            mPathPlanner.addPoint(currentPos)
+            mPathPlanner.drawPath()
+            prevLatLong = currentPos
             Toast.makeText(this, "Συντεταγμένες\n ${it.latitude}, ${it.longitude}", Toast.LENGTH_SHORT).show()
         }
     }
