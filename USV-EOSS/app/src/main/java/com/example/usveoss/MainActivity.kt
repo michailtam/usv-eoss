@@ -17,21 +17,21 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay as delay
 
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListener {
     private lateinit var map:  GoogleMap
     private var mZoomLevelMin = 13f
     private var mZoomLevelMax = 19f
-    private var mScale = 0.01f
+    private var mScale = 0.001f
+    private var lastZoomLevel: Float = -1f
     private val mTypeAndStyle by lazy { TypeAndStyle() }
     private val mCameraAndViewport by lazy { CameraAndViewport(10f) } // Start zoom level
 
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
         // Add the USV marker
         val bitmap = fromPngToBitmap(R.drawable.the_otter_usv, scale = mScale) // Convert the png image to bitmap
         val usvIcon = BitmapDescriptorFactory.fromBitmap(bitmap)
-        map.addMarker(
+        val usvMarker = map.addMarker(
             MarkerOptions()
                 .position(getLatLon())
                 .title("USV")
@@ -117,14 +117,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
         map.setOnMarkerDragListener(this)
 
         // Tracks the zoom process to scale the usv icon appropriately
-        //TODO: Current
         map.setOnCameraMoveListener {
             val currentZoom = map.cameraPosition.zoom
-            val width = (bitmap.width * mScale).toInt()
-            val height = (bitmap.height * mScale).toInt()
-            //val scaledBitmap = Bitmap.createScaledBitmap(bitmap, width, height, true)
-            //var usvIconScaled = BitmapDescriptorFactory.fromBitmap(scaledBitmap)
-            Log.d("ZOOMING", "Zoom in progress: $currentZoom")
+
+            // Linearly interpolate scale between 0.001 and 0.05
+            val zoomFraction = ((currentZoom - mZoomLevelMin) / (mZoomLevelMax - mZoomLevelMin)).coerceIn(0f, 1f)
+            val newScale = 0.001f + zoomFraction * (0.05f - 0.001f)
+
+            val scaledBitmap = fromPngToBitmap(R.drawable.the_otter_usv, scale = newScale)
+            val icon = BitmapDescriptorFactory.fromBitmap(scaledBitmap)
+            usvMarker?.setIcon(icon)
+
+            Log.d("ZOOM", "Zoom=$currentZoom | Scale=$newScale")
+            lastZoomLevel = currentZoom
         }
     }
 
