@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -43,11 +44,24 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
     private val usvLatLong = LatLng(latitude, longitude)
     private var prevLatLong = LatLng(latitude, longitude)
 
+    // Getters and Setters
+    fun getUSVLatLon(): LatLng { return usvLatLong }
+    fun setUSVStartLatLon(coords: LatLng) {
+        prevLatLong = coords
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main) // Load the layout defined in activity_main.xml
-        setSupportActionBar(findViewById(R.id.toolbar))
+        //setSupportActionBar(findViewById(R.id.toolbar))
+
+        // Define controls
+        val btnClear = findViewById<Button>(R.id.btnClear)
+
+        btnClear.setOnClickListener {
+            mPathPlanner.clearAllPaths()
+        }
 
         var mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -78,7 +92,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
         val usvIcon = BitmapDescriptorFactory.fromBitmap(bitmap)
         val usvMarker = map.addMarker(
             MarkerOptions()
-                .position(getLatLon())
+                .position(getUSVLatLon())
                 .title("USV")
                 .draggable(true)
                 .icon(usvIcon)
@@ -136,11 +150,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
         }
 
         mPathPlanner.setMap(map)
-    }
-
-    // Get LatLon coordinates
-    fun getLatLon(): LatLng {
-        return usvLatLong
     }
 
     private fun onMapClicked() {

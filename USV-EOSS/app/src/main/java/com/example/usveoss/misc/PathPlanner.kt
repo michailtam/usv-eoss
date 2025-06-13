@@ -8,6 +8,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import android.graphics.Color
+import com.example.usveoss.MainActivity
 import com.example.usveoss.R
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -23,6 +24,13 @@ class PathPlanner(private val context: Context) {
 
     fun setMap(map: GoogleMap) {
         this.map = map
+    }
+
+    fun setStartUSVlatLong() {
+        if (context is MainActivity) {
+            var usvCoords = (context as MainActivity).getUSVLatLon()
+            (context as MainActivity).setUSVStartLatLon(usvCoords)
+        }
     }
 
     // Add a point to the list
@@ -74,6 +82,11 @@ class PathPlanner(private val context: Context) {
         for (polyline in polylines) {
             polyline.remove()
         }
+        for (marker in cornerMarkers) {
+            marker.remove()
+        }
         polylines.clear()
+        cornerMarkers.clear()
+        setStartUSVlatLong()
     }
 }

@@ -5,4 +5,5 @@
     <string name="satellite">Satelite</string>
     <string name="terrain">Terrain</string>
     <string name="none">None</string>
+    <string name="clearbtn">Εκκαθάριση</string>
 </resources>
