@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
     private var mScale = 0.001f
     private var lastZoomLevel: Float = -1f
     private val mTypeAndStyle by lazy { TypeAndStyle() }
-    private val mPathPlanner by lazy { PathPlanner() }
+    private val mPathPlanner by lazy { PathPlanner(this) }
     private val mCameraAndViewport by lazy { CameraAndViewport(10f) } // Start zoom level
 
     // Lat/Lon for thira in Santorini
@@ -150,7 +150,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
             mPathPlanner.addPoint(currentPos)
             mPathPlanner.drawPath()
             prevLatLong = currentPos
-            Toast.makeText(this, "Συντεταγμένες\n ${it.latitude}, ${it.longitude}", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, "Συντεταγμένες\n ${it.latitude}, ${it.longitude}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -165,7 +165,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
     }
 
     // Convert a vector image to a bitmap one
-    private fun fromPngToBitmap(id: Int, scale: Float = 0.5f): Bitmap {
+    fun fromPngToBitmap(id: Int, scale: Float = 0.5f): Bitmap {
         val bitmap = BitmapFactory.decodeResource(resources, id)
         val width = (bitmap.width * scale).toInt()
         val height = (bitmap.height * scale).toInt()
