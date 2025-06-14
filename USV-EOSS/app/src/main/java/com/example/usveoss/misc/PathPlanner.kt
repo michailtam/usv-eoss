@@ -26,30 +26,22 @@ class PathPlanner(private val context: Context) {
         this.map = map
     }
 
-    fun setStartUSVlatLong() {
-        if (context is MainActivity) {
-            var usvCoords = (context as MainActivity).getUSVLatLon()
-            (context as MainActivity).setUSVStartLatLon(usvCoords)
-        }
+    fun getLastPoint(): LatLng? {
+        return polylinePoints.lastOrNull()
     }
 
-    // Add a point to the list
-    fun addPoint(point: LatLng) {
-        polylinePoints.add(point)
-        drawCornerMarker(point)
-    }
-
-    // Draw polyline from collected points
-    fun drawPath() {
-        if (polylinePoints.size >= 2 && map != null) {
-            val polyline = map!!.addPolyline(
+    fun addSegment(from: LatLng, to: LatLng) {
+        map?.let {
+            val segment = it.addPolyline(
                 PolylineOptions()
-                    .addAll(polylinePoints)
+                    .add(from)
+                    .add(to)
                     .color(Color.YELLOW)
                     .width(8f)
             )
-            polylines.add(polyline)
-            polylinePoints.clear()
+            polylines.add(segment)
+            polylinePoints.add(to) // only store the latest
+            drawCornerMarker(to)
         }
     }
 
@@ -77,6 +69,26 @@ class PathPlanner(private val context: Context) {
         return BitmapDescriptorFactory.fromBitmap(scaledBitmap)
     }
 
+    // Remove the last segment and marker
+    fun removeLastSegment() {
+        if (polylines.isNotEmpty()) {
+            // Remove last polyline from the map and list
+            val lastPolyline = polylines.removeAt(polylines.size - 1)
+            lastPolyline.remove()
+
+            // Remove last corner marker from map and list
+            if (cornerMarkers.isNotEmpty()) {
+                val lastMarker = cornerMarkers.removeAt(cornerMarkers.size - 1)
+                lastMarker.remove()
+            }
+
+            // Remove the last polyline point
+            if (polylinePoints.isNotEmpty()) {
+                polylinePoints.removeAt(polylinePoints.size - 1)
+            }
+        }
+    }
+
     // Optionally clear all drawn polylines
     fun clearAllPaths() {
         for (polyline in polylines) {
@@ -87,6 +99,5 @@ class PathPlanner(private val context: Context) {
         }
         polylines.clear()
         cornerMarkers.clear()
-        setStartUSVlatLong()
     }
 }

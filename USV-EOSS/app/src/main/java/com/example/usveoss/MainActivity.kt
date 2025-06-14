@@ -46,9 +46,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
 
     // Getters and Setters
     fun getUSVLatLon(): LatLng { return usvLatLong }
-    fun setUSVStartLatLon(coords: LatLng) {
-        prevLatLong = coords
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,9 +55,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
 
         // Define controls
         val btnClear = findViewById<Button>(R.id.btnClear)
+        val btnDelCurrent = findViewById<Button>(R.id.btnDeleteCurrent)
 
         btnClear.setOnClickListener {
             mPathPlanner.clearAllPaths()
+            prevLatLong = usvLatLong
+        }
+        btnDelCurrent.setOnClickListener {
+            //mPathPlanner.removeLast()
+            mPathPlanner.removeLastSegment()
+            prevLatLong = mPathPlanner.getLastPoint() ?: getUSVLatLon()
         }
 
         var mapFragment = supportFragmentManager
@@ -155,9 +159,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
     private fun onMapClicked() {
         map.setOnMapClickListener {
             val currentPos = LatLng(it.latitude, it.longitude)
-            mPathPlanner.addPoint(prevLatLong)
-            mPathPlanner.addPoint(currentPos)
-            mPathPlanner.drawPath()
+            mPathPlanner.addSegment(prevLatLong, currentPos)
+            //mPathPlanner.addPoint(prevLatLong)
+            //mPathPlanner.addPoint(currentPos)
+            //mPathPlanner.drawPath()
+
             prevLatLong = currentPos
             //Toast.makeText(this, "Συντεταγμένες\n ${it.latitude}, ${it.longitude}", Toast.LENGTH_SHORT).show()
         }

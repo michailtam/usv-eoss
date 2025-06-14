@@ -6,4 +6,6 @@
     <string name="terrain">Terrain</string>
     <string name="none">None</string>
     <string name="clearbtn">Εκκαθάριση</string>
+    <string name="usvBtn">USV</string>
+    <string name="delPrev">Διαγραφή</string>
 </resources>
