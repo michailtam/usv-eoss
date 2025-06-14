@@ -10,6 +10,9 @@ import com.example.usveoss.R
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.SphericalUtil
+import android.os.Handler
+import android.os.Looper
+
 
 class PathPlanner(private val context: Context) {
     private val polylinePoints = mutableListOf<LatLng>()
@@ -117,6 +120,10 @@ class PathPlanner(private val context: Context) {
             )
             marker?.let { cornerMarkers.add(it) }
             marker?.showInfoWindow()
+            // Wait for 3 sec before the marker gets hidden
+            Handler(Looper.getMainLooper()).postDelayed({
+                marker?.hideInfoWindow()
+            }, 3000)
         }
     }
 
