@@ -134,9 +134,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
         // Add Listeners for Mouse clicks
         onMapClicked()
 
-        // Add UI-Controls
-        map.setOnMarkerDragListener(this)
-
         // Tracks the zoom process to scale the usv icon appropriately
         map.setOnCameraMoveListener {
             val currentZoom = map.cameraPosition.zoom
@@ -160,16 +157,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
         map.setOnMapClickListener {
             val currentPos = LatLng(it.latitude, it.longitude)
             mPathPlanner.addSegment(prevLatLong, currentPos)
-            //mPathPlanner.addPoint(prevLatLong)
-            //mPathPlanner.addPoint(currentPos)
-            //mPathPlanner.drawPath()
-
             prevLatLong = currentPos
-            //Toast.makeText(this, "Συντεταγμένες\n ${it.latitude}, ${it.longitude}", Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun onMarkerDrag(p0: Marker) {
+        TODO("Not yet implemented")
     }
 
     override fun onMarkerDragEnd(p0: Marker) {

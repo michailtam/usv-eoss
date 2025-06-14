@@ -56,4 +56,5 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.google.maps)
+    implementation("com.google.maps.android:android-maps-utils:2.2.5")
 }
