@@ -8,7 +8,7 @@ class CameraAndViewport(private val zoomLevel: Float) {
 
     // Tilt the camera to achieve a 3D effect for better viewing the region
     val santoriniThira : CameraPosition = CameraPosition.Builder()
-        .target(mLlatLon.getUSVLatLon())
+        .target(mLlatLon.getUSVLatLong())
         .zoom(zoomLevel)
         .bearing(25f)
         .tilt(45f)
@@ -20,3 +20,4 @@ class CameraAndViewport(private val zoomLevel: Float) {
         LatLng(36.483749, 25.484117)  // North-East
     )
 }
+

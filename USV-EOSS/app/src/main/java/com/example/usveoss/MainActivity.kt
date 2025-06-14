@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -37,15 +38,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
     private val mTypeAndStyle by lazy { TypeAndStyle() }
     private val mPathPlanner by lazy { PathPlanner(this) }
     private val mCameraAndViewport by lazy { CameraAndViewport(10f) } // Start zoom level
+    private lateinit var txtTotalDistance: TextView
 
-    // Lat/Lon for thira in Santorini
+    // Lat/Lon for Thira in Santorini island
     private var latitude = 36.415416
     private var longitude = 25.426502
-    private val usvLatLong = LatLng(latitude, longitude)
+    private var usvLatLong = LatLng(latitude, longitude)
     private var prevLatLong = LatLng(latitude, longitude)
 
     // Getters and Setters
-    fun getUSVLatLon(): LatLng { return usvLatLong }
+    fun getUSVLatLong(): LatLng { return usvLatLong }
+    fun setUSVLatLong(usvpos: LatLng) { usvLatLong = usvpos }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,24 +56,28 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
         setContentView(R.layout.activity_main) // Load the layout defined in activity_main.xml
         //setSupportActionBar(findViewById(R.id.toolbar))
 
-        // Define controls
+        // Define controls and the listeners
         val btnClear = findViewById<Button>(R.id.btnClear)
         val btnDelCurrent = findViewById<Button>(R.id.btnDeleteCurrent)
 
         btnClear.setOnClickListener {
             mPathPlanner.clearAllPaths()
             prevLatLong = usvLatLong
+            updateTotalDistanceLabel()
+
         }
         btnDelCurrent.setOnClickListener {
-            //mPathPlanner.removeLast()
             mPathPlanner.removeLastSegment()
-            prevLatLong = mPathPlanner.getLastPoint() ?: getUSVLatLon()
+            prevLatLong = mPathPlanner.getLastPoint() ?: getUSVLatLong()
+            updateTotalDistanceLabel()
         }
 
         var mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
 
         mapFragment.getMapAsync(this) // initializes the map asynchronously
+        txtTotalDistance = findViewById(R.id.txtTotalDistance)
+        mPathPlanner.setUSVLatLong(usvLatLong)  // Set start lat/long of the USV
     }
 
     // Create the Options Menu
@@ -96,7 +103,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
         val usvIcon = BitmapDescriptorFactory.fromBitmap(bitmap)
         val usvMarker = map.addMarker(
             MarkerOptions()
-                .position(getUSVLatLon())
+                .position(getUSVLatLong())
                 .title("USV")
                 .draggable(true)
                 .icon(usvIcon)
@@ -141,15 +148,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
             // Linearly interpolate scale between 0.001 and 0.05
             val zoomFraction = ((currentZoom - mZoomLevelMin) / (mZoomLevelMax - mZoomLevelMin)).coerceIn(0f, 1f)
             val newScale = 0.001f + zoomFraction * (0.05f - 0.001f)
-
             val scaledBitmap = fromPngToBitmap(R.drawable.the_otter_usv, scale = newScale)
             val icon = BitmapDescriptorFactory.fromBitmap(scaledBitmap)
             usvMarker?.setIcon(icon)
-
-            Log.d("ZOOM", "Zoom=$currentZoom | Scale=$newScale")
             lastZoomLevel = currentZoom
         }
-
         mPathPlanner.setMap(map)
     }
 
@@ -158,6 +161,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
             val currentPos = LatLng(it.latitude, it.longitude)
             mPathPlanner.addSegment(prevLatLong, currentPos)
             prevLatLong = currentPos
+            updateTotalDistanceLabel()
         }
     }
 
@@ -178,5 +182,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
         val width = (bitmap.width * scale).toInt()
         val height = (bitmap.height * scale).toInt()
         return Bitmap.createScaledBitmap(bitmap, width, height, true)
+    }
+
+    // Update the total distance after adding a new point on the path
+    private fun updateTotalDistanceLabel() {
+        val distance = mPathPlanner.getTotalDistance()
+        val label = String.format("Total Distance: %.1f m", distance)
+        txtTotalDistance.text = label
     }
 }

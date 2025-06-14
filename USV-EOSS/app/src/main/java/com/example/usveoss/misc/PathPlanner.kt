@@ -17,6 +17,7 @@ class PathPlanner(private val context: Context) {
     private val cornerMarkers = mutableListOf<Marker>() // For visualizing corners
     private val distanceLabels = mutableListOf<Pair<LatLng, String>>() // midpoint + distance string
     private val labelOverlays = mutableListOf<GroundOverlay>() // actual overlays for distance labels
+    private var usvLatLong: LatLng? = null
     private var map: GoogleMap? = null
 
     // Getter and Setter functions
@@ -24,6 +25,8 @@ class PathPlanner(private val context: Context) {
         this.map = map
     }
     fun getLastPoint(): LatLng? = polylinePoints.lastOrNull()
+    fun setUSVLatLong(usvpos: LatLng) { usvLatLong = usvpos }
+    fun getPolylinePointSize() = polylinePoints.size
 
     // Add a new segment to the path
     fun addSegment(from: LatLng, to: LatLng) {
@@ -36,6 +39,9 @@ class PathPlanner(private val context: Context) {
                     .width(8f)
             )
             polylines.add(segment)
+            if (polylinePoints.isEmpty()) {
+                polylinePoints.add(from)
+            }
             polylinePoints.add(to) // only store the latest
             drawCornerMarker(to)
             addDistance(from, to)
@@ -74,7 +80,7 @@ class PathPlanner(private val context: Context) {
 
     // Create the bitmap containing the distance
     private fun createTextBitmap(text: String): Bitmap {
-        val scaleFactor = 2f  // Render at 4x resolution for sharpness
+        val scaleFactor = 2f  // Render at 2x resolution for sharpness
         val paint = android.graphics.Paint().apply {
             textSize = 40f * scaleFactor  // Use large size for crisp output
             color = Color.BLACK
@@ -149,6 +155,14 @@ class PathPlanner(private val context: Context) {
         }
     }
 
+    fun getTotalDistance(): Double {
+        var total = 0.0
+        for (i in 1 until polylinePoints.size) {
+            total += SphericalUtil.computeDistanceBetween(polylinePoints[i - 1], polylinePoints[i])
+        }
+        return total
+    }
+
     // Clear the overall path
     fun clearAllPaths() {
         for (polyline in polylines) {
@@ -161,6 +175,7 @@ class PathPlanner(private val context: Context) {
             overlay.remove()
         }
         polylines.clear()
+        polylinePoints.clear()
         cornerMarkers.clear()
         labelOverlays.clear()
         distanceLabels.clear()
