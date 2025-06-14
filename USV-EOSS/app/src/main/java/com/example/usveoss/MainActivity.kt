@@ -59,6 +59,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
         // Define controls and the listeners
         val btnClear = findViewById<Button>(R.id.btnClear)
         val btnDelCurrent = findViewById<Button>(R.id.btnDeleteCurrent)
+        val btnCamToUSV = findViewById<Button>(R.id.btnCamToUSV)
 
         btnClear.setOnClickListener {
             mPathPlanner.clearAllPaths()
@@ -70,6 +71,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
             mPathPlanner.removeLastSegment()
             prevLatLong = mPathPlanner.getLastPoint() ?: getUSVLatLong()
             updateTotalDistanceLabel()
+        }
+        btnCamToUSV.setOnClickListener {
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(usvLatLong, 19f))
         }
 
         var mapFragment = supportFragmentManager

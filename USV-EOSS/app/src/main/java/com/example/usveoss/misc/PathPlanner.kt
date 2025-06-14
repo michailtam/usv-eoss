@@ -36,7 +36,7 @@ class PathPlanner(private val context: Context) {
                     .add(from)
                     .add(to)
                     .color(Color.YELLOW)
-                    .width(8f)
+                    .width(5f)
             )
             polylines.add(segment)
             if (polylinePoints.isEmpty()) {
