@@ -100,8 +100,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMarkerDragListen
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
 
-        // TODO: Find the latitude pos 50m away to the sea
-        //santorini_thira = SphericalUtil.computeOffset(santorini_thira, 0.0, 1000.0)
         // Add the USV marker
         val bitmap = fromPngToBitmap(R.drawable.the_otter_usv, scale = mScale) // Convert the png image to bitmap
         val usvIcon = BitmapDescriptorFactory.fromBitmap(bitmap)
