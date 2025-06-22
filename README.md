@@ -57,8 +57,8 @@ Planned enhancements include:
 ## Screenshots
 | **Mission Path** | **Path Planning** |
 |-----------------|-----------------|
-| <img src="USV-EOSS/images/mission_path.png" alt="Mission Path" width="500" height="300" border="0" />     | <img src="USV-EOSS/images/path_planning.png" alt="Path Planning" width="500" height="300" border="0" />     |
+| <img src="./USV-EOSS/images/mission_path.png" alt="Mission Path" width="500" height="300" border="0" />     | <img src="./USV-EOSS/images/path_planning.png" alt="Path Planning" width="500" height="300" border="0" />     |
 
 | **Google Maps integration in Android Studio** |
 |-----------------|
-| <img src="USV-EOSS/images/android_studio.png" alt="Android Studio with Google Maps" width="500" height="300" border="0" />     |
+| <img src="./USV-EOSS/images/android_studio.png" alt="Android Studio with Google Maps" width="500" height="300" border="0" />     |
